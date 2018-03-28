@@ -244,7 +244,7 @@ library("mgcv")
 formula <- "s(x1, x2)"
 
 res <- adapt_gam(x, pvals, formula, formula)
-res_corr <- corr_lfdr(res)
+res_corr <- corr_lfdr(res, niter_oracle = 1)
 
 pdf("../figs/simul1_fit.pdf", width = 10, height = 3.7)
 par(mfrow = c(1, 3))
