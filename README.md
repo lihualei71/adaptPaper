@@ -50,4 +50,13 @@ Rscript exprs_laptop.R
 cd ..
 ```
 ### Experiments on the cluster
-`estrogen_random_cluster.R`, `simul1_cluster.R` and `simul2_cluster.R` 
+`estrogen_random_cluster.R`, `simul1_cluster.R` and `simul2_cluster.R` should be implemented on a cluster. Each file reads two environmental variables: `times` and `seed`. `times` specifies the number of repeated experiments and `seed` specifies the random seed. In the folder `bash/`, there are three `.sh` files corresponding to each task. Each `.sh` files generates 50 jobs with `times = 2` and `seed` ranging from 0 to 49. The outputs should contain 50 `.RData` files for each job, which are not listed in this repository. Finally, `aggregate.R` merges all outputs and turn them into a single `.RData` file for each task, namely `estrogen_random.RData`, `simul1.RData` and `simul2.RData`.
+
+### Figures 
+`adapt_exprs_plot.R` generates all figures in Section 5.
+
+```
+cd R
+R CMD BATCH adapt_exprs_plot.R 
+cd ..
+```
