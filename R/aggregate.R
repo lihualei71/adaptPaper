@@ -1,3 +1,7 @@
+#---------------------------------------------------------------
+# Aggregate the results obtained from the cluster
+#---------------------------------------------------------------
+
 ## Aggregate estrogen_random
 NumRej <- matrix(0, 13, 30)
 for (seed in 0:49){

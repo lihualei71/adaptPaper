@@ -1,9 +1,14 @@
+#---------------------------------------------------------------
+# Generate the results for the gene/drug example with random orderings) in Section 5.1.
+# Need to be ran on clusters. See README.
+#---------------------------------------------------------------
+
 source("../helpers/other_methods.R")
 source("expr_template.R")
 
 repeat_times <- as.numeric(Sys.getenv("times"))
 seed <- as.numeric(Sys.getenv("seed"))
-output_filename <- paste0("../../data/estrogen_random_", seed, ".RData")
+output_filename <- paste0("../data/estrogen_random_", seed, ".RData")
 set.seed(seed)
 
 NumRej_list <- list()

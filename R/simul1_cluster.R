@@ -1,5 +1,10 @@
-source("../helpers/other_methods.R")
-source("../helpers/summarize_methods.R")
+#---------------------------------------------------------------
+# Generate the results for Simulation 1.
+# Need to be ran on clusters. See README.
+#---------------------------------------------------------------
+
+source("other_methods.R")
+source("summarize_methods.R")
 if (!requireNamespace("adaptMT", quietly = TRUE)){
     devtools::install_github("lihualei71/adaptMT")
 }
@@ -8,6 +13,7 @@ library("mgcv")
 
 repeat_times <- as.numeric(Sys.getenv("times"))
 seed <- as.numeric(Sys.getenv("seed"))
+set.seed(seed)
 
 simul1 <- function(x, mu, H0, 
                    pi_formula, mu_formula, 
@@ -87,7 +93,6 @@ simul1 <- function(x, mu, H0,
 }
 
 ####### Generate x
-set.seed(seed)
 n <- 2500
 x1 <- seq(-100, 100, length.out = 50)
 x2 <- seq(-100, 100, length.out = 50)
@@ -95,7 +100,7 @@ x <- expand.grid(x1, x2)
 colnames(x) <- c("x1", "x2")
 pi_formula <- mu_formula <- "s(x1, x2)"
 alphas <- seq(0.01, 0.3, 0.01)
-output_filename <- paste0("../../data/simul1_seed_", seed, ".RData")
+output_filename <- paste0("../data/simul1_seed_", seed, ".RData")
 
 ## Case 1: a circle in the center
 H0 <- apply(x, 1, function(coord){sum(coord^2) < 900})

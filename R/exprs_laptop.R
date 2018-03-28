@@ -1,10 +1,14 @@
+#---------------------------------------------------------------
+# Generate all results (which can be done using a laptop)
+# This includes Section 5.1 (except the gene/drug example with random orderings) and Section 5.3
+#---------------------------------------------------------------
+
 if (!requireNamespace("IHWpaper", quietly = TRUE)){
     ## try http:// if https:// URLs are not supported
     source("https://bioconductor.org/biocLite.R")
     biocLite("IHWpaper")
 }
 library("IHWpaper")    
-
 source("other_methods.R")
 source("expr_template.R")
 set.seed(1)
@@ -27,7 +31,7 @@ for (i in 1:2){
     x <- data.frame(x = x)
 
     result <- adapt_expr(x, pvals)
-    filename <- paste0("../../data/", dataset, "_res.RData")
+    filename <- paste0("../data/", dataset, "_res.RData")
     save(file = filename, result)
 }
 
@@ -47,7 +51,7 @@ for (dataset in c("bottomly", "airway", "pasilla")){
     x <- data.frame(x = x)
 
     result <- adapt_expr(x, pvals)
-    filename <- paste0("../../data/", dataset, "_res.RData")
+    filename <- paste0("../data/", dataset, "_res.RData")
     save(file = filename, result)
 }
 
@@ -74,5 +78,5 @@ pvals <- pvals[reorder]
 x <- data.frame(x = x)
 
 result <- adapt_expr(x, pvals)
-filename <- paste0("../../data/", dataset, "_res.RData")
+filename <- paste0("../data/", dataset, "_res.RData")
 save(file = filename, result)

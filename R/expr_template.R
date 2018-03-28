@@ -1,17 +1,12 @@
+#---------------------------------------------------------------
+# Helpers: a template for the experiment
+#---------------------------------------------------------------
+
 if (!requireNamespace("adaptMT", quietly = TRUE)){
     devtools::install_github("lihualei71/adaptMT")
 }
 library("adaptMT")
 library("splines")
-
-### set up all methods
-## Accumulation Tests (Li & Barber, 2016a)
-## Code from 'https://www.stat.uchicago.edu/~rina/accumulationtests/accumulation_test_functions.R'
-source("accumulation_test_functions.R")
-
-## Auxiliary functions of SABHA (Li & Barber, 2016b)
-## Code from 'http://www.stat.uchicago.edu/~rina/sabha/All_q_est_functions.R'
-source("All_q_est_functions.R")
 source("other_methods.R")
 
 adapt_expr <- function(x, pvals){

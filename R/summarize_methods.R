@@ -1,3 +1,7 @@
+#---------------------------------------------------------------
+# Helpers: summarize all other methods and compute FDR and power
+#---------------------------------------------------------------
+
 ## BH procedure (Benjamini & Hochberg, 1995)
 summary_BH <- function(pvals, H0,
                        alphas = seq(0.01, 0.3, 0.01)){

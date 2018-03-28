@@ -1,3 +1,15 @@
+#---------------------------------------------------------------
+# Helpers: Setup all other methods
+#---------------------------------------------------------------
+
+## Accumulation Tests (Li & Barber, 2016a)
+## Code from 'https://www.stat.uchicago.edu/~rina/accumulationtests/accumulation_test_functions.R'
+source("accumulation_test_functions.R")
+
+## Auxiliary functions of SABHA (Li & Barber, 2016b)
+## Code from 'http://www.stat.uchicago.edu/~rina/sabha/All_q_est_functions.R'
+source("All_q_est_functions.R")
+
 ## Independent Hypothesis Weighting (Ignatiadis et al. 2016)
 if (!requireNamespace("IHW", quietly = TRUE)){
     ## try http:// if https:// URLs are not supported

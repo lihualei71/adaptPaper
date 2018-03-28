@@ -1,3 +1,7 @@
+#---------------------------------------------------------------
+# Helpers: functions to generate plots in Section 5
+#---------------------------------------------------------------
+
 plot_results <- function(vals, methods, title,
                          cols, ltys, pchs,
                          ylim, ylab,
