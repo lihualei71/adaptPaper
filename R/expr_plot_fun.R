@@ -61,7 +61,8 @@ plot_corr <- function(objs, title,
     }
 }
 
-plot_thresh_lfdr <- function(obj, alpha, title, xlab, legend_pos,
+plot_thresh_lfdr <- function(obj, x, pvals,
+                             alpha, title, xlab, legend_pos,
                              disp_ymax = 0.2, xlim = NULL){
     if (!requireNamespace("adaptMT", quietly = TRUE)){
         stop("\'adaptMT\' package not found. Please install.")
@@ -70,11 +71,13 @@ plot_thresh_lfdr <- function(obj, alpha, title, xlab, legend_pos,
     par(mfrow = c(2, 1), mar=c(4.1, 4.1, 2, 0.15),
         cex.axis = 1.7, cex.main = 1.7, cex.lab = 1.7)
     title_thresh <- paste0("Rejection threshold, (", title, ")")
-    adaptMT::plot_1d_thresh(obj, alpha, title_thresh,
+    adaptMT::plot_1d_thresh(obj, x, pvals,
+                            alpha, title_thresh,
                             xlab = xlab, xlim = xlim,
                             disp_ymax = disp_ymax)
     title_lfdr <- paste0("Estimated local FDR, (", title, ")")
-    adaptMT::plot_1d_lfdr(obj, alpha, title_lfdr,
+    adaptMT::plot_1d_lfdr(obj, x, pvals,
+                          alpha, title_lfdr,
                           xlab = xlab, xlim = xlim,
                           disp_ymax = disp_ymax,
                           legend_pos = legend_pos)

@@ -60,7 +60,8 @@ adapt_expr <- function(x, pvals){
     nrejs <- res_adapt$nrejs
     NumRej[13,] <- nrejs[1:num_alpha]
 
-    result <- list(NumRej = NumRej, adapt = res_adapt)
+    result <- list(NumRej = NumRej, adapt = res_adapt,
+                   x = x, pvals = pvals)
     
     options(oldw)
     return(result)

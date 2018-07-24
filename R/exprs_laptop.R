@@ -3,12 +3,19 @@
 # This includes Section 5.1 (except the gene/drug example with random orderings) and Section 5.3
 #---------------------------------------------------------------
 
+if (!requireNamespace("adaptMT", quietly = TRUE)){
+    ## try http:// if https:// URLs are not supported
+    devtools::install_github("lihualei71/adaptMT")
+}
+library("adaptMT")
+
 if (!requireNamespace("IHWpaper", quietly = TRUE)){
     ## try http:// if https:// URLs are not supported
     source("https://bioconductor.org/biocLite.R")
     biocLite("IHWpaper")
 }
-library("IHWpaper")    
+library("IHWpaper")
+
 source("other_methods.R")
 source("expr_template.R")
 set.seed(1)

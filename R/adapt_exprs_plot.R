@@ -10,6 +10,72 @@ library("splines")
 source("expr_plot_fun.R")
 library("latex2exp")
 
+#### Figure 1
+n <- 50
+set.seed(1)
+pvals <- pnorm(rnorm(n,mean=c(seq(-3,0,length.out=n/5), rep(0,4*n/5))))
+pvals <- pmax(pvals,0.005)
+
+s <-.15
+lambda <- .5
+k <- 30
+hlo <- .5
+hhi <- .5
+vlo <- 0
+vhi <- 1
+
+pvals <- pmax(pvals,0.01)
+w <- 0.42 * exp(-0.043 * (0:n))
+s <- 1
+
+pdf("../figs/AdaPT_blue_red.pdf", height = 3, width = 4)
+par(mar = c(3, 2.5, 3.1, 0.1))
+plot(pvals, ylim = 0:1, xlim = c(.5, n + hhi), xaxt = "n",
+     yaxt = "n", xaxs = "i", yaxs = "i", type = "n",
+     xlab = "", ylab = "")
+title("AdaPT (Intermediate Stage)")
+title(ylab = expression(paste("p-value ", p[i])), line = 1.5)
+title(xlab = expression(paste("predictor ", x[i])), line = 1.5)
+axis(2, at = c(0, 1), labels = c("0", "1"))
+abline(h = 0:1)
+polygon(x = 0.5 + c(0, n, n:0), y = c(vlo, vlo, s * rev(w)),
+        col = "#FFDDDD", border = "red")
+polygon(x = 0.5 + c(0, n, n:0), y = c(vhi, vhi, rev(1 - w)),
+        col = "light blue", border = "blue")
+which.cens <- which((pvals < s * w[-1]) | (pvals > 1 - w[-1]))
+points((1:n)[-which.cens], pvals[-which.cens], pch = 16, cex = 0.8)
+points(which.cens, pvals[which.cens], pch = 16, cex = 0.8,
+       col = ifelse(pvals[which.cens] < 0.5, "red", "blue"))
+legend("topright", bg = "white",lty = 1,col = c("blue", "red"),
+       legend = c(expression(1 - s[t](x)),expression(s[t](x))))
+box()
+dev.off()
+
+pdf("../figs/AdaPT_purple.pdf",height = 3, width = 4)
+par(mar = c(3, 2.5, 3.1, 0.1))
+plot(pvals, ylim = 0:1, xlim = c(.5, n+hhi), xaxt = "n",
+     yaxt = "n", xaxs = "i", yaxs = "i", type = "n",
+     xlab = "", ylab = "")
+title("AdaPT (Analyst's View)")
+title(ylab = expression(paste("p-value ", p[i])), line = 1.5)
+title(xlab = expression(paste("predictor ", x[i])), line = 1.5)
+axis(2, at = c(0,1), labels = c("0", "1"))
+abline(h = 0:1)
+polygon(x = 0.5 + c(0, n, n:0), y = c(vlo, vlo, s * rev(w)),
+        col = "#FFDDDD", border = "red")
+polygon(x = 0.5 + c(0, n, n:0), y = c(vhi, vhi, rev(1 - w)),
+        col = "light blue", border = "blue")
+which.cens <- which((pvals < s * w[-1]) | (pvals > 1 - w[-1]))
+points((1:n)[-which.cens], pvals[-which.cens], pch = 16, cex = 0.8)
+points(which.cens, pvals[which.cens], pch = 21,
+       col = "purple", bg = "white", cex = 0.8)
+points(which.cens, 1 - pvals[which.cens], pch = 21, col = "purple",
+       bg = "white", cex = 0.8)
+legend("topright",bg = "white",lty = 1,col = c("blue", "red"),
+       legend = c(expression(1 - s[t](x)), expression(s[t](x))))
+box()
+dev.off()
+
 #### Real data examples
 methods <- c('SeqStep', 'HingeExp', 'ForwardStop', 'Ada. SeqStep', 'BH', 'Storey-BH', 'Barber-Candes', 'SABHA (step)', 'SABHA (ordered)', 'IHW', 'IHW (oracle)', 'IF (oracle)', 'AdaPT')
 ## Green for non-adaptive ordered testing procedures: SeqStep, Accumulation Test, Forward Stop and Adaptive SeqStep; Blue for non-adaptive BH-type methods: BH, Storey, BC; Orange for IHW and IF; Black for SABHA; Red for AdaPT
@@ -20,15 +86,13 @@ pchs <- c(4,3,2,1,2,3,1,1,4,2,3,5,1)
 
 #### gene/drug response example (Section 5.1)
 load("../data/estrogen_high_res.RData")
-NumRej2 <- result$NumRej
-obj2 <- result$adapt
+result2 <- result
 
 load("../data/estrogen_mod_res.RData")
-NumRej1 <- result$NumRej
-obj1 <- result$adapt
+result1 <- result
 
 load("../data/estrogen_random.RData")
-NumRej0 <- NumRej
+result0 <- result
 
 ## load("../data/estrogen_random_ihw.RData")
 ## NumRej <- matrix(0, 13, 30)
@@ -44,15 +108,16 @@ NumRej0 <- NumRej
 ## Figure 2
 pdf("../figs/estrogen_rejs.pdf", width = 10, height = 4)
 par(mfrow = c(1, 3), oma = c(0, 0, 3, 0), cex.axis = 1.7, cex.main = 1.7, cex.lab = 1.7)
-plot_results(NumRej0, methods, "Random ordering", cols, ltys, pchs, c(0, 1500), "# of Rejections", TRUE, 1.2)
-plot_results(NumRej1, methods, "Moderately informative ordering", cols, ltys, pchs, c(0, 4000), "# of Rejections", FALSE)
-plot_results(NumRej2, methods, "Highly informative Ordering", cols, ltys, pchs, c(0, 4000), "", FALSE)
+plot_results(result0$NumRej, methods, "Random ordering", cols, ltys, pchs, c(0, 1500), "# of Rejections", TRUE, 1.2)
+plot_results(result1$NumRej, methods, "Moderately informative ordering", cols, ltys, pchs, c(0, 4000), "# of Rejections", FALSE)
+plot_results(result2$NumRej, methods, "Highly informative Ordering", cols, ltys, pchs, c(0, 4000), "", FALSE)
 mtext("Number of Rejections (Gene/Drug Response)",outer=TRUE,cex=1.8,font=2)
 dev.off()
 
 ## Figure 3 (left)
 pdf("../figs/estrogen_moderate_info_05.pdf")
-plot_thresh_lfdr(obj1, 0.05, "alpha = 0.05",
+plot_thresh_lfdr(result1$adapt, result1$x, result1$pvals,
+                 0.05, "alpha = 0.05",
                  xlab = "x = rank", 
                  disp_ymax = 0.1,
                  legend_pos = "topright")
@@ -60,7 +125,8 @@ dev.off()
 
 ## Figure 3 (right)
 pdf("../figs/estrogen_moderate_info_10.pdf")
-plot_thresh_lfdr(obj1, 0.1, "alpha = 0.1",
+plot_thresh_lfdr(result1$adapt, result1$x, result1$pvals,
+                 0.1, "alpha = 0.1",
                  xlab = "x = rank",
                  disp_ymax = 0.1,
                  legend_pos = "topright")
@@ -68,7 +134,8 @@ dev.off()
 
 ## Figure 4 (left)
 pdf("../figs/estrogen_high_info_05.pdf")
-plot_thresh_lfdr(obj2, 0.05, "alpha = 0.05",
+plot_thresh_lfdr(result2$adapt, result2$x, result2$pvals,
+                 0.05, "alpha = 0.05",
                  xlab = "x = rank",
                  disp_ymax = 0.3, 
                  legend_pos = "topright")
@@ -76,14 +143,15 @@ dev.off()
 
 ## Figure 4 (right)
 pdf("../figs/estrogen_high_info_10.pdf")
-plot_thresh_lfdr(obj2, 0.1, "alpha = 0.1",
+plot_thresh_lfdr(result2$adapt, result2$x, result2$pvals,
+                 0.1, "alpha = 0.1",
                  xlab = "x = rank",
                  disp_ymax = 0.3,
                  legend_pos = "topright")
 dev.off()
 
-corr_estrogen_mod <- corr_lfdr(obj1)
-corr_estrogen_high <- corr_lfdr(obj2)
+corr_estrogen_mod <- corr_lfdr(result1$adapt, result1$x, result1$pvals)
+corr_estrogen_high <- corr_lfdr(result2$adapt, result2$x, result2$pvals)
 
 corr_estrogen <- list(corr_estrogen_mod,
                       corr_estrogen_high)
@@ -95,25 +163,24 @@ dev.off()
 
 #### Bottomly experiment
 load("../data/Bottomly_res.RData")
-NumRej <- result$NumRej
-obj <- result$adapt
 
 ## Figure 11, left
 pdf("../figs/Bottomly_rejs.pdf")
 par(mfrow = c(1, 1), cex.axis = 1.7, cex.main = 1.7, cex.lab = 1.7)
-plot_results(NumRej, methods, "Number of Rejections (Bottomly)", cols, ltys, pchs, c(0, 5300), "# of Rejections")
+plot_results(result$NumRej, methods, "Number of Rejections (Bottomly)", cols, ltys, pchs, c(0, 5300), "# of Rejections")
 dev.off()
 
 ## Figure 11, right
 pdf("../figs/Bottomly_info_10.pdf")
-plot_thresh_lfdr(obj, 0.1, "Bottomly, alpha = 0.1",
+plot_thresh_lfdr(result$adapt, result$x, result$pvals,
+                 0.1, "Bottomly, alpha = 0.1",
                  xlab = "x = log(baseMean)",
-                 xlim = c(log(2), max(obj$data[["x"]]$x)),
+                 xlim = c(log(2), max(result$x)),
                  disp_ymax = 0.1, legend_pos = "topleft")
 dev.off()
 
 ## Figure 11, middle
-corr_Bottomly <- corr_lfdr(obj)
+corr_Bottomly <- corr_lfdr(result$adapt, result$x, result$pvals)
 
 pdf("../figs/Bottomly_corr.pdf")
 plot_corr(corr_Bottomly, "Correlation of Estimated Local FDR (Bottomly)", ylim = c(0.98, 1), cex.main = 1.7, cex.lab = 1.7)
@@ -121,24 +188,23 @@ dev.off()
 
 #### airway experiment
 load("../data/airway_res.RData")
-NumRej <- result$NumRej
-obj <- result$adapt
 
 ## Figure 12, left
 pdf("../figs/airway_rejs.pdf")
 par(mfrow = c(1, 1), cex.axis = 1.7, cex.main = 1.7, cex.lab = 1.7)
-plot_results(NumRej, methods, "Number of Rejections (airway)", cols, ltys, pchs, c(0, 12000), "# of Rejections")
+plot_results(result$NumRej, methods, "Number of Rejections (airway)", cols, ltys, pchs, c(0, 12000), "# of Rejections")
 dev.off()
 
 ## Figure 12, right
 pdf("../figs/airway_info_10.pdf")
-plot_thresh_lfdr(obj, 0.1, "airway, alpha = 0.1",
+plot_thresh_lfdr(result$adapt, result$x, result$pvals,
+                 0.1, "airway, alpha = 0.1",
                  xlab = "x = log(baseMean)",
                  disp_ymax = 0.1, legend_pos = "topleft")
 dev.off()
 
 ## Figure 12, middle
-corr_airway <- corr_lfdr(obj)
+corr_airway <- corr_lfdr(result$adapt, result$x, result$pvals)
 
 pdf("../figs/airway_corr.pdf")
 plot_corr(corr_airway, "Correlation of Estimated Local FDR (airway)", ylim = c(0.98, 1), cex.main = 1.7, cex.lab = 1.7)
@@ -146,25 +212,24 @@ dev.off()
 
 #### pasilla experiment
 load("../data/pasilla_res.RData")
-NumRej <- result$NumRej
-obj <- result$adapt
 
 ## Figure 13, left
 pdf("../figs/pasilla_rejs.pdf")
 par(mfrow = c(1, 1), cex.axis = 1.7, cex.main = 1.7, cex.lab = 1.7)
-plot_results(NumRej, methods, "Number of Rejections (pasilla)", cols, ltys, pchs, c(0, 2000), "# of Rejections")
+plot_results(result$NumRej, methods, "Number of Rejections (pasilla)", cols, ltys, pchs, c(0, 2000), "# of Rejections")
 dev.off()
 
 ## Figure 13, right
 pdf("../figs/pasilla_info_10.pdf")
-plot_thresh_lfdr(obj, 0.1, "pasilla, alpha = 0.1",
+plot_thresh_lfdr(result$adapt, result$x, result$pvals,
+                 0.1, "pasilla, alpha = 0.1",
                  xlab = "x = log(baseMean)",
-                 xlim = c(log(2), max(obj$data[["x"]]$x)),
+                 xlim = c(log(2), max(result$x)),
                  disp_ymax = 0.1, legend_pos = "topleft")
 dev.off()
 
 ## Figure 13, middle
-corr_pasilla <- corr_lfdr(obj)
+corr_pasilla <- corr_lfdr(result$adapt, result$x, result$pvals)
 
 pdf("../figs/pasilla_corr.pdf")
 plot_corr(corr_pasilla, "Correlation of Estimated Local FDR (pasilla)", ylim = c(0.98, 1), cex.main = 1.7, cex.lab = 1.7)
@@ -172,24 +237,23 @@ dev.off()
 
 #### proteomics experiment
 load("../data/proteomics_res.RData")
-NumRej <- result$NumRej
-obj <- result$adapt
 
 ## Figure 14, left
 pdf("../figs/proteomics_rejs.pdf")
 par(mfrow = c(1, 1), cex.axis = 1.7, cex.main = 1.7, cex.lab = 1.7)
-plot_results(NumRej, methods, "Number of Rejections (SILAC)", cols, ltys, pchs, c(0, 1200), "# of Rejections")
+plot_results(result$NumRej, methods, "Number of Rejections (SILAC)", cols, ltys, pchs, c(0, 1200), "# of Rejections")
 dev.off()
 
 ## Figure 14, right
 pdf("../figs/proteomics_info_10.pdf")
-plot_thresh_lfdr(obj, 0.1, "SILAC, alpha = 0.1",
+plot_thresh_lfdr(result$adapt, result$x, result$pvals,
+                 0.1, "SILAC, alpha = 0.1",
                  xlab = "x = log(number of peptides)",
                  disp_ymax = 0.1, legend_pos = "topleft")
 dev.off()
 
 ## Figure 14, middle
-corr_proteomics <- corr_lfdr(obj)
+corr_proteomics <- corr_lfdr(result$adapt, result$x, result$pvals)
 
 pdf("../figs/proteomics_corr.pdf")
 plot_corr(corr_proteomics, "Correlation of Estimated Local FDR (SILAC)", ylim = c(0.98, 1), cex.main = 1.7, cex.lab = 1.7)
@@ -245,7 +309,7 @@ library("mgcv")
 formula <- "s(x1, x2)"
 
 res <- adapt_gam(x, pvals, formula, formula)
-res_corr <- corr_lfdr(res, niter_oracle = 1)
+res_corr <- corr_lfdr(res, x, pvals)
 
 pdf("../figs/simul1_fit.pdf", width = 10, height = 3.7)
 par(mfrow = c(1, 3))
@@ -293,7 +357,7 @@ pdf(power.filename, width = 9, height = 2.8)
 par(mfrow = c(1, 3), mar = c(4, 5, 2, 2), oma=c(0, 0, 0, 5), cex.axis = 1.7, cex.main = 1.7, cex.lab = 1.7)
 for (k in 1:3){
     power <- result[[k]]$power[inds,]
-    legend <- (k == 1)
+    legend <- FALSE
     plot_results(power, methods, titles[k], cols, ltys, pchs,
                  ylim = c(0, 1.05), ylab = "power",
                  legend = legend)

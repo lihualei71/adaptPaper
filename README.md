@@ -1,17 +1,15 @@
 # Paper Repository
 
-This repository contains all R code to replicate the results and the figures in our paper: [AdaPT: An interactive procedure for multiple testing with side information](https://arxiv.org/abs/1609.06035). 
+This repository contains the code to implement all examples in our paper: [AdaPT: An interactive procedure for multiple testing with side information](https://arxiv.org/abs/1609.06035). Note that the code in this repository does not exactly replicate the results and the figures in the paper because our R package [`adaptMT`](https://github.com/lihualei71/adaptMT) was developed after the acceptance of the paper. **For readers who want to exactly reproduce the results, please check our older repository** [`AdaPT`](https://github.com/lihualei71/AdaPT). In contrast, the `adaptPaper` repository serves as a tutorial of [`adaptMT`](https://github.com/lihualei71/adaptMT) package and we recommend the readers to follow it, rather than the `AdaPT` repository, for future research. 
 
 ## Introduction
 All real experiments (Section 5.1 and Section 5.3), except the gene/drug example with random orderings, can be done in a laptop. The simulations, as well as the gene/drug example with random orderings, should be ran on a cluster. All R files are listed in the folder `R/`. The bash files to submit jobs to the cluster are listed in the folder `bash/` (note that this depends on your cluster and the bash file might need to be changed correspondingly. See the section "cluster jobs" below for details). The outputs and the plots have already been contained in the folder `data/` and the folder `figs/`, respectively. 
 
 ## Installing the package
-We are developing an R package [`adaptMT`](https://github.com/lihualei71/adaptMT). The file `adaptMR_0.2.0.9000.tar.gz` is the version that generates the results and the plots in the published paper. To replicate the results, we recommend installing the source package directly because later we might update the package. 
+Run the following code in `R`
 
 ```
-git clone https://github.com/lihualei71/adaptPaper.git
-cd adaptPaper
-R CMD INSTALL adaptMT_0.2.0.9000.tar.gz
+devtools::install_github("lihualei71/adaptMT")
 ```
 
 ## R files
